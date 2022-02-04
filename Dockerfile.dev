@@ -1,0 +1,31 @@
+FROM mediaset-spark-aws-glue-demo-builder
+
+ENV SPARK_VERSION=2.4.5
+ENV HADOOP_VERSION=2.8
+
+ENV SPARK_HOME=/opt/spark
+ENV PYTHONPATH="/opt/spark/python/lib/pyspark.zip:/opt/spark/python/lib/py4j-0.10.7-src.zip:/opt/spark/python"
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+RUN rm -f requirements.txt
+
+COPY dist/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-glue.tgz /opt/.
+RUN tar -xzf /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-glue.tgz -C /opt \
+ && mv /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-glue /opt/spark \
+ && rm -rf /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-glue.tgz \
+ && mkdir /tmp/spark-events
+
+COPY conf/* /opt/spark/conf/
+
+# procpcs required for the Spark History
+RUN apt-get install -y liblzo2-dev procps
+RUN git clone https://github.com/twitter/hadoop-lzo /opt/spark/hadoop-lzo
+WORKDIR /opt/spark/hadoop-lzo
+ENV JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+RUN C_INCLUDE_PATH=/usr/local/Cellar/lzo/2.06/include/lzo/LIBRARY_PATH=/usr/local/Cellar/lzo/2.06/lib/ mvn clean install
+RUN cp target/hadoop-lzo-0.4.21-SNAPSHOT.jar /opt/spark/jars
+
+WORKDIR /opt/spark
+RUN rm -rf hadoop-lzo
+ENTRYPOINT /opt/spark/sbin/start-history-server.sh && bash
