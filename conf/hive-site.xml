@@ -1,10 +1,35 @@
 <configuration>
     <property>
-        <name>hive.metastore.client.factory.class</name>
+        <name>hive.imetastoreclient.factory.class</name>
         <value>com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory</value>
     </property>
     <property>
-        <name>hive.metastore.glue.catalogid</name>
-        <value>YOUR_AWS_ACCOUNT_ID</value>
+      <name>hive.metastore.glue.catalogid</name>
+      <value>YOUR_AWS_ACCOUNT_ID</value>
+    </property>
+    <property>
+        <name>aws.glue.cache.table.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>aws.glue.cache.table.size</name>
+        <value>1000</value>
+    </property>
+    <property>
+        <name>aws.glue.cache.table.ttl-mins</name>
+        <value>30</value>
+    </property>
+
+    <property>
+        <name>aws.glue.cache.db.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>aws.glue.cache.db.size</name>
+        <value>1000</value>
+    </property>
+    <property>
+        <name>aws.glue.cache.db.ttl-mins</name>
+        <value>30</value>
     </property>
 </configuration>
