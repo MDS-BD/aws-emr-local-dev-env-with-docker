@@ -18,7 +18,7 @@ RUN tar -xzf /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-glue.tgz -C
 
 COPY conf/* /opt/spark/conf/
 
-# procpcs required for the Spark History
+# required for the Spark History
 RUN apt-get install -y liblzo2-dev procps
 RUN git clone https://github.com/twitter/hadoop-lzo /opt/spark/hadoop-lzo
 WORKDIR /opt/spark/hadoop-lzo
@@ -28,4 +28,4 @@ RUN cp target/hadoop-lzo-0.4.21-SNAPSHOT.jar /opt/spark/jars
 
 WORKDIR /opt/spark
 RUN rm -rf hadoop-lzo
-ENTRYPOINT /opt/spark/sbin/start-history-server.sh && bash
+CMD /opt/spark/sbin/start-history-server.sh && bash

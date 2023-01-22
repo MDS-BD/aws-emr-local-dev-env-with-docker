@@ -5,7 +5,7 @@ simulates a cluster EMR used for ETL tasks by Mediaset Business Digital.
 The main feature of the built image is the ability to use AWS Glue Data Catalog as a Hive Metastore.
 
 The final Docker image contains:
-- Python 3.7.12
+- Python 3.7
 - Spark 2.4.5
 - Hadoop 2.8
 - Hive 1.2.1
@@ -25,14 +25,14 @@ _Advance_ section increase RAM to (at least) 4GB.
    make build-spark
    ```
 
-2) build the final dev environment docker image called `mediaset-spark-aws-glue-demo`
+2) build the final dev environment docker image called `mediaset-spark-aws-glue-demo:python3.7-spark2.4.5`
 
    ```shell
    make build-dev-env
    ```
 
-3) Before to use the image, configure the Glue Data Catalog adding the following
-section in the [./conf/hive-site.xml](conf/hive-site.xml):
+3) Before to use the image, configure the Glue Data Catalog adding 
+`YOUR_AWS_ACCOUNT_ID` in the [./conf/hive-site.xml](conf/hive-site.xml) file:
 
    ```xml
    <property>
@@ -41,7 +41,8 @@ section in the [./conf/hive-site.xml](conf/hive-site.xml):
    </property>
    ```
 
-Now you are ready to locally develop spark jobs querying Glue Data Catalogs using the docker image `mediaset-spark-aws-glue-demo`.
+Now you are ready to locally develop spark jobs querying Glue Data Catalogs 
+using the docker image `mediaset-spark-aws-glue-demo:python3.7-spark2.4.5`.
 
 ## Testing
 
@@ -49,13 +50,13 @@ Now you are ready to locally develop spark jobs querying Glue Data Catalogs usin
    (Add also `-e AWS_SESSION_TOKEN=YOUR_AWS_SESSION_TOKEN` if you need to set a specific role).
 
    ```shell
-   docker run -it \
+   docker run -it --rm \
    -p 4040:4040 \
-   -v $(pwd)/conf/hive-site.xml:/opt/spark/conf/hive-site.xml \
+   -v /PROJECT_PATH/conf/hive-site.xml:/opt/spark/conf/hive-site.xml \
    -e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY \
    -e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY \
    --name spark-env \
-   mediaset-spark-aws-glue-demo \
+   mediaset-spark-aws-glue-demo:python3.7-spark2.4.5 \
    bash
    ```
 
@@ -76,7 +77,7 @@ Now you are ready to locally develop spark jobs querying Glue Data Catalogs usin
 1. Open PyCharm Professional and import the Project.
 2. Under File, choose `Settings...` (for Mac, under PyCharm, choose Preferences)
 3. Under Settings, choose Project Interpreter. Click the gear icon, choose `Show All..` from the drop-down menu.
-4. Choose the `+` icon and create a new Docker interpreter selecting the image `mediaset-spark-aws-glue-demo` and press `OK`.
+4. Choose the `+` icon and create a new Docker interpreter selecting the image `mediaset-spark-aws-glue-demo:python3.7-spark2.4.5` and press `OK`.
 5. Edit the `Run/Debug Configurations` of the project to properly launch the docker image
 6. Insert the `Script path` selecting the path of the module `main.py` contained in the project.
 7. In `Environment Variables` add `AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY;AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY`.
@@ -114,11 +115,11 @@ To launch a persistent Spark History Server able to read all the Spark Event Log
 you should launch an independent docker container with the following command (replace PROJECT_PATH with the path on your local computer):
 
 ```shell
-docker run -itd \
+docker run -it --rm \
 -p 18080:18080 \
 -v /PROJECT_PATH/spark-events:/tmp/spark-events \
 --name spark-history \
-mediaset-spark-aws-glue-demo
+mediaset-spark-aws-glue-demo:python3.7-spark2.4.5
 ```
 
 Open a Web Browser at the following address [http://localhost:18080](http://localhost:18080) to see all the Spark logs generated.

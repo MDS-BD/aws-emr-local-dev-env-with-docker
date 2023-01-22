@@ -6,11 +6,6 @@ RUN apt-get update && \
     apt-get install -y build-essential && \
     apt-get install wget
 
-# ADD REPO FOR JDK
-RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list \
-&&  apt-get update \
-&&  mkdir -p /usr/share/man/man1
-
 # INSTALL PACKAGES
 RUN apt install -y wget gnupg software-properties-common
 RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -

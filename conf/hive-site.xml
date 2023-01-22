@@ -3,4 +3,8 @@
         <name>hive.metastore.client.factory.class</name>
         <value>com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory</value>
     </property>
+    <property>
+        <name>hive.metastore.glue.catalogid</name>
+        <value>YOUR_AWS_ACCOUNT_ID</value>
+    </property>
 </configuration>

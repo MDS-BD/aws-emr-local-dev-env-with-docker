@@ -18,8 +18,9 @@ mkdir -p ~/.m2/repository/org/spark-project
 cp -r ~/.m2/repository/org/apache/hive ~/.m2/repository/org/spark-project
 
 # BUILD AWS GLUE DATA CATALOG CLIENT
-git clone --depth 1 https://github.com/awslabs/aws-glue-data-catalog-client-for-apache-hive-metastore.git /opt/glue
+git clone -b branch-1.10.0 https://github.com/awslabs/aws-glue-data-catalog-client-for-apache-hive-metastore.git /opt/glue
 cd /opt/glue
+git checkout 83e728b47655a8592efe6441213da1c8a608f18a
 sed -i '/<packaging>pom<\/packaging>/a <dependencies><dependency><groupId>org.apache.hadoop<\/groupId><artifactId>hadoop-common<\/artifactId><version>${hadoop.version}<\/version><scope>provided<\/scope><\/dependency><\/dependencies>' shims/pom.xml
 mvn clean package -DskipTests=true -pl -aws-glue-datacatalog-hive2-client
 
@@ -40,6 +41,7 @@ find /opt/glue -name "*.jar" -exec cp {} jars \;
 # Copy AWS jars
 echo :quit | ./bin/spark-shell --conf spark.jars.packages=com.amazonaws:aws-java-sdk:$AWS_SDK_VERSION,org.apache.hadoop:hadoop-aws:$HADOOP_VERSION
 cp /root/.ivy2/jars/*.jar jars
+rm -rf jars/io.netty*
 
 # Create archive
 DIRNAME=spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION%.*}-glue
